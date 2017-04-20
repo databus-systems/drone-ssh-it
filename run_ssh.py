@@ -43,9 +43,9 @@ def main():
     payload = os.environ
     vargs = extract_vargs(payload)
     check_vargs(vargs)
-    print('********')
+    print('****PAYLOAD****')
     print(payload)
-    print('********')
+    print('***************')
 
     host = vargs.get('host', '')
     port = vargs.get('port', '')
@@ -53,7 +53,7 @@ def main():
     passphrase = vargs.get('key_passphrase', '')
     username = vargs.get('username', '')
     password = vargs.get('password', '')
-    commands = vargs.get('commands', [])
+    commands = vargs.get('ssh_commands', '')
 
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
@@ -75,7 +75,7 @@ def main():
         ssh.connect(host, port=int(port), username=username, password=password)
 
     if commands:
-        stdin, stdout, stderr = ssh.exec_command('\n'.join(commands))
+        stdin, stdout, stderr = ssh.exec_command(commands.replace(',', '\n'))
         print('\n'.join(['>' + x for x in commands]))
         print('---STDOUT---')
         print(stdout.read().decode())
