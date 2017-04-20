@@ -1,17 +1,23 @@
-FROM python:3.5
+FROM python:3.5-alpine
 
-LABEL maintainer "Costin Bleotu <costin.bleotu@databus.systems>
+LABEL maintainer "Costin Bleotu <costin.bleotu@databus.systems>"
 
-RUN pip install --no-cache-dir --upgrade \
-	pip \
-	setuptools
+RUN set -ex \
+        && apk add --no-cache \
+            ca-certificates \
+        \
+        && apk add --no-cache --virtual .build-dependencies \
+            python3-dev\
+            gcc \
+            musl-dev \
+            libffi-dev \
+            openssl-dev \
+        \
+        && pip install --no-cache-dir --upgrade \
+            paramiko \
+        \
+        && apk del .build-dependencies
 
-
-ADD requirements.txt .
-RUN pip install -r requirements.txt
-RUN pip install --use-wheel --no-index --find-links=wheeldir \
-    -r requirements.txt
 ADD run_ssh.py /usr/bin/
 
-ENTRYPOINT ["python3", "/usr/bin/run_ssh.py"]
-
+CMD ["python3", "/usr/bin/run_ssh.py"]
