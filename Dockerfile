@@ -5,6 +5,8 @@ LABEL maintainer "Costin Bleotu <costin.bleotu@databus.systems>"
 RUN set -ex \
         && apk add --no-cache \
             ca-certificates \
+            libffi \
+            openssl \
         \
         && apk add --no-cache --virtual .build-dependencies \
             python3-dev\
